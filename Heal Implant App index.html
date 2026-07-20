@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HEAL-IMPLANT Companion App Prototype</title>
+    <style>
+        :root {
+            --bg-color: #eef2f3;
+            --primary: #0f6259;
+            --primary-light: #e6f2f0;
+            --accent-orange: #fbf0df;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --alert-bg: #fde8e8;
+            --alert-border: #f8b4b4;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-dark);
+        }
+
+        .toggle-container {
+            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 30px;
+            display: flex;
+            box-shadow: var(--card-shadow);
+        }
+
+        .toggle-btn {
+            border: none;
+            background: transparent;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        /* Frame Smartphone */
+        .phone-frame {
+            width: 380px;
+            height: 780px;
+            background: #ffffff;
+            border-radius: 40px;
+            border: 10px solid #1f2937;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            width: 140px;
+            height: 22px;
+            background: #1f2937;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .screen-content {
+            flex: 1;
+            padding: 40px 20px 20px 20px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .screen-content.active {
+            display: block;
+        }
+
+        /* Component Styles */
+        .header-sub {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-family: 'Georgia', serif;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .patient-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #f1f5f9;
+        }
+
+        .card-ai {
+            background: var(--primary-light);
+            border: none;
+        }
+
+        .card-reminder {
+            background: var(--accent-orange);
+            border: none;
+        }
+
+        .card-alert {
+            background: var(--alert-bg);
+            border: 1px solid var(--alert-border);
+        }
+
+        .card-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .ai-dose {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .ai-dose span {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 78%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .mood-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .mood-btn {
+            flex: 1;
+            margin: 0 4px;
+            padding: 12px 5px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .mood-btn:hover, .mood-btn.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .action-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(15, 98, 89, 0.3);
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            height: 60px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #fff;
+        }
+
+        .nav-item {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toggle View Mode -->
+    <div class="toggle-container">
+        <button class="toggle-btn active" onclick="switchView('clinician')">For Clinicians</button>
+        <button class="toggle-btn" onclick="switchView('patient')">For Patients</button>
+    </div>
+
+    <!-- Smartphone Frame -->
+    <div class="phone-frame">
+        <div class="notch"></div>
+
+        <!-- CLINICIAN VIEW -->
+        <div id="clinician-view" class="screen-content active">
+            <div class="header-sub">For Clinicians</div>
+            <div class="header-title">Dashboard</div>
+            <div class="patient-meta">Patient: A. Rahman · Day 14 post-op</div>
+
+            <!-- AI Recommended Dose Card -->
+            <div class="card card-ai">
+                <div class="card-label">AI-Recommended Dose</div>
+                <div class="ai-dose" id="clinician-dose">42 <span>J/cm²</span></div>
+                <div class="card-desc">NIR activation · recalculated from margin scan + healing data</div>
+            </div>
+
+            <!-- Healing Progress Card -->
+            <div class="card">
+                <div class="card-label" style="color: var(--text-muted);">Healing Progress</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="clinician-progress" style="width: 78%;"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="clinician-progress-text">78% · on track</span>
+                    <span style="color: var(--text-muted);">Week 2 of 4</span>
+                </div>
+            </div>
+
+            <!-- Patient Alert Card -->
+            <div id="alert-box" class="card card-alert">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 18px;">⚠️</span>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; color: #c53030;">REVIEW RECOMMENDED</div>
+                        <div style="font-size: 12px; color: #742a2a;" id="alert-text">Mild redness self-reported by patient today</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Dosing Log -->
+            <div class="card">
+                <div class="card-label" style="color: var(--text-muted); margin-bottom: 12px;">Recent Dosing Log</div>
+                <div class="log-item">
+                    <span>Day 14</span>
+                    <strong style="color: var(--primary);">42 J/cm²</strong>
+                </div>
+                <div class="log-item">
+                    <span>Day 10</span>
+                    <strong style="color: var(--primary);">38 J/cm²</strong>
+                </div>
+                <div class="log-item">
+                    <span>Day 6</span>
+                    <strong style="color: var(--primary);">35 J/cm²</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- PATIENT VIEW -->
+        <div id="patient-view" class="screen-content">
+            <div class="header-sub">For Patients</div>
+            <div class="header-title">My Care</div>
+            <div class="patient-meta">Halo, Bapak Rahman</div>
+
+            <!-- Today's Reminder Card -->
+            <div class="card card-reminder">
+                <div class="card-label" style="color: #92400e;">Today's Reminder</div>
+                <div style="font-size: 18px; font-weight: 700; color: #78350f; margin-bottom: 4px;">Light activation session</div>
+                <div style="font-size: 12px; color: #92400e;">Scheduled 3:00 PM · takes about 10 minutes</div>
+            </div>
+
+            <!-- Healing Progress -->
+            <div class="card">
+                <div class="card-label" style="color: var(--text-muted);">Your Healing Progress</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="patient-progress" style="width: 78%;"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Day 14 of 30</span>
+                    <span style="color: var(--primary);" id="patient-status-text">Looking good</span>
+                </div>
+            </div>
+
+            <!-- Symptom Self-Report -->
+            <div class="card">
+                <div class="card-label" style="color: var(--text-muted); text-align: center;">How Are You Feeling Today?</div>
+                <div class="mood-container">
+                    <div class="mood-btn" onclick="selectMood('Fine')">
+                        <div style="font-size: 20px;">😊</div>
+                        Fine
+                    </div>
+                    <div class="mood-btn selected" onclick="selectMood('Mild')">
+                        <div style="font-size: 20px;">😐</div>
+                        Mild
+                    </div>
+                    <div class="mood-btn" onclick="selectMood('Concern')">
+                        <div style="font-size: 20px;">☹️</div>
+                        Concern
+                    </div>
+                </div>
+                <button class="action-btn" onclick="submitReport()">Report a symptom</button>
+            </div>
+
+            <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px;">
+                Next clinic check-up<br>
+                <strong style="color: var(--text-dark);">Tuesday, 24 September · Dr. Rahman</strong>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Mockup -->
+        <div class="bottom-nav">
+            <div class="nav-item active">●<br>Dashboard</div>
+            <div class="nav-item">●<br>Patients</div>
+            <div class="nav-item">●<br>Logs</div>
+            <div class="nav-item">●<br>Settings</div>
+        </div>
+    </div>
+
+    <script>
+        let currentSymptom = "Mild redness";
+
+        function switchView(role) {
+            const clinicianView = document.getElementById('clinician-view');
+            const patientView = document.getElementById('patient-view');
+            const buttons = document.querySelectorAll('.toggle-btn');
+
+            if (role === 'clinician') {
+                clinicianView.classList.add('active');
+                patientView.classList.remove('active');
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                patientView.classList.add('active');
+                clinicianView.classList.remove('active');
+                buttons[1].classList.add('active');
+                buttons[0].classList.remove('active');
+            }
+        }
+
+        function selectMood(mood) {
+            const btns = document.querySelectorAll('.mood-btn');
+            btns.forEach(b => b.classList.remove('selected'));
+
+            if (mood === 'Fine') {
+                btns[0].classList.add('selected');
+                currentSymptom = "No discomfort reported";
+            } else if (mood === 'Mild') {
+                btns[1].classList.add('selected');
+                currentSymptom = "Mild redness self-reported by patient today";
+            } else {
+                btns[2].classList.add('selected');
+                currentSymptom = "Moderate-to-high discomfort reported by patient";
+            }
+        }
+
+        function submitReport() {
+            document.getElementById('alert-text').innerText = currentSymptom;
+            alert("Laporan gejala berhasil dikirim ke dashboard Dokter!");
+        }
+    </script>
+</body>
+</html>
