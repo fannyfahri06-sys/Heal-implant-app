@@ -3,442 +3,727 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEAL-IMPLANT Companion App Prototype</title>
+    <title>HEAL-IMPLANT · Prototype App</title>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
-            --bg-color: #eef2f3;
-            --primary: #0f6259;
-            --primary-light: #e6f2f0;
-            --accent-orange: #fbf0df;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --alert-bg: #fde8e8;
-            --alert-border: #f8b4b4;
-            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fc;
+            color: #1e293b;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            color: var(--text-dark);
         }
 
-        .toggle-container {
-            margin-bottom: 20px;
-            background: #ffffff;
-            padding: 6px;
-            border-radius: 30px;
-            display: flex;
-            box-shadow: var(--card-shadow);
-        }
-
-        .toggle-btn {
-            border: none;
-            background: transparent;
-            padding: 10px 24px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-muted);
-        }
-
-        .toggle-btn.active {
-            background: var(--primary);
-            color: #ffffff;
-        }
-
-        /* Frame Smartphone */
-        .phone-frame {
-            width: 380px;
-            height: 780px;
+        /* --- Mockup phone container --- */
+        .phone-mockup {
+            max-width: 420px;
+            width: 100%;
             background: #ffffff;
             border-radius: 40px;
-            border: 10px solid #1f2937;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             overflow: hidden;
+            padding: 16px 16px 20px;
+            position: relative;
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        /* Status bar (fake) */
+        .status-bar {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            padding: 6px 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            letter-spacing: 0.3px;
+        }
+        .status-bar i {
+            margin-right: 4px;
         }
 
-        .notch {
-            width: 140px;
-            height: 22px;
-            background: #1f2937;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            z-index: 10;
+        /* App header */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 4px 16px;
+        }
+        .app-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b3b5c, #1a6e8e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
+        .app-header .badge {
+            background: #dbeafe;
+            color: #1e4b7a;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
         }
 
-        .screen-content {
+        /* Navigation tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 6px;
+            background: #f1f5f9;
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .nav-tabs button {
             flex: 1;
-            padding: 40px 20px 20px 20px;
-            overflow-y: auto;
-            display: none;
+            border: none;
+            background: transparent;
+            padding: 10px 6px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-tabs button i {
+            font-size: 14px;
+        }
+        .nav-tabs button.active {
+            background: #ffffff;
+            color: #0b3b5c;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+        }
+        .nav-tabs button:hover:not(.active) {
+            color: #1e293b;
         }
 
-        .screen-content.active {
+        /* Pages */
+        .page {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+        .page.active {
             display: block;
         }
 
-        /* Component Styles */
-        .header-sub {
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .header-title {
-            font-size: 28px;
-            font-family: 'Georgia', serif;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .patient-meta {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
-
+        /* ---- Cards & Components ---- */
         .card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 15px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid #f1f5f9;
+            border-radius: 20px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid #eef2f6;
+            margin-bottom: 16px;
+            transition: border 0.2s;
+        }
+        .card:hover {
+            border-color: #cbd5e1;
         }
 
-        .card-ai {
-            background: var(--primary-light);
-            border: none;
-        }
-
-        .card-reminder {
-            background: var(--accent-orange);
-            border: none;
-        }
-
-        .card-alert {
-            background: var(--alert-bg);
-            border: 1px solid var(--alert-border);
-        }
-
-        .card-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--primary);
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .ai-dose {
-            font-size: 38px;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .ai-dose span {
-            font-size: 18px;
+        .card-title {
+            font-size: 13px;
             font-weight: 600;
-        }
-
-        .card-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 6px;
-        }
-
-        .progress-bar-bg {
-            height: 10px;
-            background: #e2e8f0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--primary);
-            width: 78%;
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-
-        .progress-text {
+            color: #475569;
+            letter-spacing: 0.3px;
+            margin-bottom: 12px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            font-size: 12px;
-            font-weight: 600;
+        }
+        .card-title i {
+            color: #1a6e8e;
         }
 
-        .log-item {
+        .patient-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .patient-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #dbeafe, #b7d9f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: #0b3b5c;
+        }
+        .patient-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .patient-info .sub {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .status-chip {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status-chip.warning {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .progress-ring {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .progress-ring .circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: conic-gradient(#1a6e8e 72%, #e9edf2 72%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #0b3b5c;
+        }
+        .progress-ring .circle span {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
+        .dose-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 13px;
         }
-
-        .log-item:last-child {
+        .dose-row:last-child {
             border-bottom: none;
         }
+        .dose-label {
+            font-size: 13px;
+            color: #475569;
+        }
+        .dose-value {
+            font-weight: 600;
+            font-size: 14px;
+            color: #0b3b5c;
+        }
+        .dose-value.highlight {
+            color: #0f7b6e;
+        }
 
-        .mood-container {
+        .btn-primary {
+            background: #0b3b5c;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            background: #0f4b70;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #cbd5e1;
+            color: #1e293b;
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            border-color: #0b3b5c;
+            color: #0b3b5c;
+        }
+
+        .reminder-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .reminder-item:last-child {
+            border-bottom: none;
+        }
+        .reminder-icon {
+            width: 36px;
+            height: 36px;
+            background: #e6f0fa;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0b3b5c;
+        }
+
+        .symptom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .symptom-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .symptom-btn.selected {
+            background: #dbeafe;
+            border-color: #1a6e8e;
+            color: #0b3b5c;
+        }
+        .symptom-btn:hover {
+            background: #eef2f6;
+        }
+
+        .checkin-area {
+            margin-top: 12px;
+        }
+        textarea {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+            background: #fafcff;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #1a6e8e;
+        }
+
+        .ai-recommend {
+            background: #f0f7fe;
+            border-radius: 16px;
+            padding: 14px 16px;
+            border-left: 4px solid #1a6e8e;
+            margin-top: 12px;
+        }
+        .ai-recommend .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #1a6e8e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ai-recommend .value {
+            font-weight: 600;
+            font-size: 18px;
+            margin: 4px 0 2px;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 16px;
+            border-top: 1px solid #eef2f6;
+            padding-top: 16px;
+        }
+
+        /* responsive tweaks */
+        @media (max-width: 440px) {
+            .phone-mockup {
+                border-radius: 28px;
+                padding: 12px;
+            }
+            .nav-tabs button {
+                font-size: 10px;
+                padding: 8px 4px;
+            }
+            .nav-tabs button i {
+                font-size: 12px;
+            }
+        }
+
+        /* small utilities */
+        .flex-between {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .mood-btn {
-            flex: 1;
-            margin: 0 4px;
-            padding: 12px 5px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: #fff;
-            text-align: center;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .mood-btn:hover, .mood-btn.selected {
-            border-color: var(--primary);
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-
-        .action-btn {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(15, 98, 89, 0.3);
-        }
-
-        .action-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            height: 60px;
-            border-top: 1px solid #f1f5f9;
-            display: flex;
-            justify-content: space-around;
             align-items: center;
-            background: #fff;
         }
-
-        .nav-item {
-            font-size: 11px;
-            color: var(--text-muted);
+        .gap-2 {
+            gap: 8px;
+        }
+        .mt-2 {
+            margin-top: 10px;
+        }
+        .text-center {
             text-align: center;
-            cursor: pointer;
         }
-
-        .nav-item.active {
-            color: var(--primary);
-            font-weight: bold;
+        .text-muted {
+            color: #64748b;
+            font-size: 12px;
+        }
+        .fw-600 {
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-    <!-- Toggle View Mode -->
-    <div class="toggle-container">
-        <button class="toggle-btn active" onclick="switchView('clinician')">For Clinicians</button>
-        <button class="toggle-btn" onclick="switchView('patient')">For Patients</button>
-    </div>
+    <div class="phone-mockup">
 
-    <!-- Smartphone Frame -->
-    <div class="phone-frame">
-        <div class="notch"></div>
+        <!-- Fake status -->
+        <div class="status-bar">
+            <span><i class="fas fa-signal"></i> 5G <i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-three-quarters"></i> 76%</span>
+        </div>
 
-        <!-- CLINICIAN VIEW -->
-        <div id="clinician-view" class="screen-content active">
-            <div class="header-sub">For Clinicians</div>
-            <div class="header-title">Dashboard</div>
-            <div class="patient-meta">Patient: A. Rahman · Day 14 post-op</div>
+        <!-- Header -->
+        <div class="app-header">
+            <h1><i class="fas fa-heartbeat" style="color:#1a6e8e; -webkit-text-fill-color:#1a6e8e; margin-right:6px;"></i> HEAL-IMPLANT</h1>
+            <span class="badge"><i class="fas fa-robot"></i> AI v2.1</span>
+        </div>
 
-            <!-- AI Recommended Dose Card -->
-            <div class="card card-ai">
-                <div class="card-label">AI-Recommended Dose</div>
-                <div class="ai-dose" id="clinician-dose">42 <span>J/cm²</span></div>
-                <div class="card-desc">NIR activation · recalculated from margin scan + healing data</div>
-            </div>
+        <!-- Navigation -->
+        <div class="nav-tabs" id="navTabs">
+            <button class="active" data-page="pageDoctor"><i class="fas fa-user-md"></i> Dokter</button>
+            <button data-page="pagePatient"><i class="fas fa-user"></i> Pasien</button>
+            <button data-page="pageAI"><i class="fas fa-brain"></i> AI</button>
+            <button data-page="pageSymptom"><i class="fas fa-clipboard-list"></i> Gejala</button>
+        </div>
 
-            <!-- Healing Progress Card -->
+        <!-- ============ PAGE 1: DOKTER ============ -->
+        <div id="pageDoctor" class="page active">
+
             <div class="card">
-                <div class="card-label" style="color: var(--text-muted);">Healing Progress</div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="clinician-progress" style="width: 78%;"></div>
+                <div class="patient-badge">
+                    <div class="patient-avatar">SA</div>
+                    <div class="patient-info">
+                        <h4>Siti Alisyah <span class="status-chip" style="margin-left:8px;">Aktif</span></h4>
+                        <div class="sub">54 th · OSCC pasca-reseksi · Hari ke-28</div>
+                    </div>
                 </div>
-                <div class="progress-text">
-                    <span id="clinician-progress-text">78% · on track</span>
-                    <span style="color: var(--text-muted);">Week 2 of 4</span>
+                <div style="margin-top:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                    <span><span class="text-muted">Terapi:</span> <strong>Fotoimunoterapi</strong></span>
+                    <span><span class="text-muted">Sesi NIR:</span> <strong>14 dari 16</strong></span>
+                    <span><span class="text-muted">Progres:</span> <strong>72%</strong></span>
                 </div>
             </div>
 
-            <!-- Patient Alert Card -->
-            <div id="alert-box" class="card card-alert">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 18px;">⚠️</span>
+            <div class="card">
+                <div class="card-title">
+                    <span><i class="fas fa-microchip"></i> Dosis Rekomendasi · Siti Alisyah</span>
+                    <span class="status-chip warning"><i class="far fa-clock"></i> 20 Mei 2025</span>
+                </div>
+
+                <div class="dose-row">
+                    <span class="dose-label">Intensitas Cahaya</span>
+                    <span class="dose-value">2129 mW/cm²</span>
+                </div>
+                <div class="dose-row">
+                    <span class="dose-label">Dosis (mci)</span>
+                    <span class="dose-value highlight">15</span>
+                </div>
+                <div class="dose-row">
+                    <span class="dose-label">Total Energi</span>
+                    <span class="dose-value">108 kJ/cm²</span>
+                </div>
+                <div class="dose-row" style="border-bottom: none; padding-bottom:4px;">
+                    <span class="dose-label">Status</span>
+                    <span class="dose-value" style="color:#0f7b6e;"><i class="fas fa-check-circle"></i> Siap aktivasi</span>
+                </div>
+
+                <button class="btn-primary" style="margin-top:14px;"><i class="fas fa-sync-alt"></i> Terapkan Rekomendasi</button>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+                <div class="flex-between">
+                    <span class="card-title" style="margin-bottom:0;"><i class="fas fa-chart-line"></i> Progres Penyembuhan</span>
+                    <span class="fw-600" style="color:#0b3b5c;">72%</span>
+                </div>
+                <div style="background:#e9edf2; height:6px; border-radius:10px; margin-top:8px; overflow:hidden;">
+                    <div style="width:72%; height:100%; background:linear-gradient(90deg,#1a6e8e,#42a5b5); border-radius:10px;"></div>
+                </div>
+                <div class="flex-between text-muted" style="margin-top:6px; font-size:11px;">
+                    <span>Hari ke-0</span>
+                    <span>Hari ke-28</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ PAGE 2: PASIEN ============ -->
+        <div id="pagePatient" class="page">
+
+            <div class="card" style="background:linear-gradient(135deg,#f0f7fe, #ffffff);">
+                <div class="flex-between">
                     <div>
-                        <div style="font-size: 11px; font-weight: 700; color: #c53030;">REVIEW RECOMMENDED</div>
-                        <div style="font-size: 12px; color: #742a2a;" id="alert-text">Mild redness self-reported by patient today</div>
+                        <div class="text-muted" style="font-size:12px;">Halo,</div>
+                        <h3 style="font-size:20px;">Siti Alisyah</h3>
                     </div>
+                    <div class="progress-ring">
+                        <div class="circle"><span>72%</span></div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; display:flex; gap:12px; flex-wrap:wrap;">
+                    <span class="status-chip"><i class="far fa-calendar-alt"></i> Sesi 14/16</span>
+                    <span class="status-chip warning"><i class="far fa-clock"></i> NIR berikutnya: 20 Mei 10:00</span>
                 </div>
             </div>
 
-            <!-- Recent Dosing Log -->
             <div class="card">
-                <div class="card-label" style="color: var(--text-muted); margin-bottom: 12px;">Recent Dosing Log</div>
-                <div class="log-item">
-                    <span>Day 14</span>
-                    <strong style="color: var(--primary);">42 J/cm²</strong>
+                <div class="card-title"><i class="fas fa-bell"></i> Pengingat Aktivasi NIR</div>
+                <div class="reminder-item">
+                    <div class="reminder-icon"><i class="fas fa-sun"></i></div>
+                    <div>
+                        <div style="font-weight:600;">Sesi NIR berikutnya</div>
+                        <div class="text-muted" style="font-size:12px;">20 Mei 2025 · 10:00 WIB</div>
+                    </div>
+                    <span style="margin-left:auto; background:#dbeafe; padding:4px 12px; border-radius:30px; font-size:11px; font-weight:600;">15 menit</span>
                 </div>
-                <div class="log-item">
-                    <span>Day 10</span>
-                    <strong style="color: var(--primary);">38 J/cm²</strong>
+                <div class="reminder-item" style="border-bottom: none;">
+                    <div class="reminder-icon"><i class="fas fa-pills"></i></div>
+                    <div>
+                        <div style="font-weight:600;">Persiapan aktivasi</div>
+                        <div class="text-muted" style="font-size:12px;">Pastikan area bersih & perangkat siap</div>
+                    </div>
                 </div>
-                <div class="log-item">
-                    <span>Day 6</span>
-                    <strong style="color: var(--primary);">35 J/cm²</strong>
+                <button class="btn-primary" style="margin-top:10px;"><i class="fas fa-play"></i> Mulai Aktivasi</button>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+                <div class="card-title"><i class="fas fa-heart"></i> Tips Harian</div>
+                <p style="font-size:13px; color:#334155;">Jaga kebersihan area insisi, konsumsi protein tinggi, dan istirahat cukup. Laporkan segera jika ada nyeri atau bengkak berlebih.</p>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                    <span class="status-chip"><i class="fas fa-check"></i> Minum cukup</span>
+                    <span class="status-chip"><i class="fas fa-check"></i> Kontrol nyeri</span>
                 </div>
             </div>
         </div>
 
-        <!-- PATIENT VIEW -->
-        <div id="patient-view" class="screen-content">
-            <div class="header-sub">For Patients</div>
-            <div class="header-title">My Care</div>
-            <div class="patient-meta">Halo, Bapak Rahman</div>
+        <!-- ============ PAGE 3: AI ============ -->
+        <div id="pageAI" class="page">
 
-            <!-- Today's Reminder Card -->
-            <div class="card card-reminder">
-                <div class="card-label" style="color: #92400e;">Today's Reminder</div>
-                <div style="font-size: 18px; font-weight: 700; color: #78350f; margin-bottom: 4px;">Light activation session</div>
-                <div style="font-size: 12px; color: #92400e;">Scheduled 3:00 PM · takes about 10 minutes</div>
-            </div>
-
-            <!-- Healing Progress -->
             <div class="card">
-                <div class="card-label" style="color: var(--text-muted);">Your Healing Progress</div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="patient-progress" style="width: 78%;"></div>
+                <div class="card-title"><i class="fas fa-brain" style="color:#0b3b5c;"></i> Rekomendasi AI · Siti Alisyah</div>
+                <div class="ai-recommend">
+                    <div class="label"><i class="fas fa-camera"></i> Analisis Margin Tumor (Hyperspectral Imaging)</div>
+                    <div class="value">Residual risk: <span style="color:#0f7b6e;">Low (12%)</span></div>
+                    <div style="font-size:13px; margin-top:4px;">Confidence: 89% · CNN margin-classification</div>
                 </div>
-                <div class="progress-text">
-                    <span>Day 14 of 30</span>
-                    <span style="color: var(--primary);" id="patient-status-text">Looking good</span>
+                <div style="margin-top:14px;">
+                    <div class="dose-row">
+                        <span class="dose-label">Intensitas optimal</span>
+                        <span class="dose-value">2129 mW/cm²</span>
+                    </div>
+                    <div class="dose-row">
+                        <span class="dose-label">Durasi aktivasi</span>
+                        <span class="dose-value">15 menit</span>
+                    </div>
+                    <div class="dose-row" style="border-bottom:none;">
+                        <span class="dose-label">Jadwal</span>
+                        <span class="dose-value">20 Mei 2025 · 10:00</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Symptom Self-Report -->
             <div class="card">
-                <div class="card-label" style="color: var(--text-muted); text-align: center;">How Are You Feeling Today?</div>
-                <div class="mood-container">
-                    <div class="mood-btn" onclick="selectMood('Fine')">
-                        <div style="font-size: 20px;">😊</div>
-                        Fine
-                    </div>
-                    <div class="mood-btn selected" onclick="selectMood('Mild')">
-                        <div style="font-size: 20px;">😐</div>
-                        Mild
-                    </div>
-                    <div class="mood-btn" onclick="selectMood('Concern')">
-                        <div style="font-size: 20px;">☹️</div>
-                        Concern
-                    </div>
-                </div>
-                <button class="action-btn" onclick="submitReport()">Report a symptom</button>
+                <div class="card-title"><i class="fas fa-route"></i> Panduan Aktivasi NIR</div>
+                <ol style="padding-left:20px; font-size:13px; color:#1e293b; line-height:1.8;">
+                    <li>Tempatkan alat NIR sesuai panduan</li>
+                    <li>Mulai aktivasi selama 15 menit</li>
+                    <li>Pantau suhu & kenyamanan pasien</li>
+                    <li>Selesai, simpan perangkat</li>
+                </ol>
+                <button class="btn-primary" style="margin-top:12px;"><i class="fas fa-play"></i> Mulai Aktivasi</button>
             </div>
 
-            <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px;">
-                Next clinic check-up<br>
-                <strong style="color: var(--text-dark);">Tuesday, 24 September · Dr. Rahman</strong>
+            <div class="card" style="margin-bottom:0; background:#f8fafc;">
+                <div class="flex-between text-muted" style="font-size:11px;">
+                    <span><i class="fas fa-database"></i> Model: HEAL-Net v2.1</span>
+                    <span><i class="fas fa-check-circle" style="color:#0f7b6e;"></i> Validasi >80%</span>
+                </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation Mockup -->
-        <div class="bottom-nav">
-            <div class="nav-item active">●<br>Dashboard</div>
-            <div class="nav-item">●<br>Patients</div>
-            <div class="nav-item">●<br>Logs</div>
-            <div class="nav-item">●<br>Settings</div>
+        <!-- ============ PAGE 4: GEJALA / SYMPTOM ============ -->
+        <div id="pageSymptom" class="page">
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-clipboard-list"></i> Monitoring Gejala Harian</div>
+                <div style="font-size:13px; font-weight:500; margin-bottom:8px;">Tingkat Nyeri</div>
+                <div class="symptom-grid">
+                    <button class="symptom-btn" data-group="pain">Tidak ada</button>
+                    <button class="symptom-btn" data-group="pain">Ringan</button>
+                    <button class="symptom-btn selected" data-group="pain">Sedang</button>
+                    <button class="symptom-btn" data-group="pain">Berat</button>
+                    <button class="symptom-btn" data-group="pain" style="grid-column: span 2;">Sangat Berat</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="font-size:13px; font-weight:500; margin-bottom:8px;">Bengkak / Kemerahan</div>
+                <div class="symptom-grid">
+                    <button class="symptom-btn" data-group="swell">Tidak ada</button>
+                    <button class="symptom-btn selected" data-group="swell">Ringan</button>
+                    <button class="symptom-btn" data-group="swell">Sedang</button>
+                    <button class="symptom-btn" data-group="swell">Berat</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="font-size:13px; font-weight:500; margin-bottom:8px;">Perasaan Umum</div>
+                <div class="symptom-grid">
+                    <button class="symptom-btn" data-group="feeling">Sangat baik</button>
+                    <button class="symptom-btn selected" data-group="feeling">Baik</button>
+                    <button class="symptom-btn" data-group="feeling">Cukup</button>
+                    <button class="symptom-btn" data-group="feeling">Buruk</button>
+                    <button class="symptom-btn" data-group="feeling" style="grid-column: span 2;">Sangat buruk</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0;">
+                <div style="font-size:13px; font-weight:500; margin-bottom:6px;">Catatan Tambahan (opsional)</div>
+                <textarea placeholder="Tambahkan keluhan atau komentar..."></textarea>
+                <button class="btn-primary" style="margin-top:12px;"><i class="fas fa-paper-plane"></i> Kirim Check-in</button>
+                <div style="margin-top:8px; font-size:11px; color:#94a3b8; text-align:center;">Data terkirim ke tim medis Anda</div>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <div class="footer-note">
+            <i class="fas fa-shield-alt" style="margin-right:4px;"></i> Data terenkripsi · HEAL-IMPLANT v2.1
+        </div>
+
     </div>
 
     <script>
-        let currentSymptom = "Mild redness";
+        (function() {
+            // ---- Tab navigation ----
+            const tabs = document.querySelectorAll('.nav-tabs button');
+            const pages = {
+                pageDoctor: document.getElementById('pageDoctor'),
+                pagePatient: document.getElementById('pagePatient'),
+                pageAI: document.getElementById('pageAI'),
+                pageSymptom: document.getElementById('pageSymptom')
+            };
 
-        function switchView(role) {
-            const clinicianView = document.getElementById('clinician-view');
-            const patientView = document.getElementById('patient-view');
-            const buttons = document.querySelectorAll('.toggle-btn');
+            tabs.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.page;
+                    // update active tab
+                    tabs.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // show page
+                    Object.keys(pages).forEach(key => {
+                        pages[key].classList.remove('active');
+                    });
+                    if (pages[target]) pages[target].classList.add('active');
+                });
+            });
 
-            if (role === 'clinician') {
-                clinicianView.classList.add('active');
-                patientView.classList.remove('active');
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
-            } else {
-                patientView.classList.add('active');
-                clinicianView.classList.remove('active');
-                buttons[1].classList.add('active');
-                buttons[0].classList.remove('active');
-            }
-        }
+            // ---- Symptom buttons toggle (simple) ----
+            document.querySelectorAll('.symptom-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const group = this.dataset.group;
+                    // find siblings in same group (within same card)
+                    const parent = this.closest('.card');
+                    if (parent) {
+                        const siblings = parent.querySelectorAll(`.symptom-btn[data-group="${group}"]`);
+                        siblings.forEach(s => s.classList.remove('selected'));
+                    }
+                    this.classList.add('selected');
+                });
+            });
 
-        function selectMood(mood) {
-            const btns = document.querySelectorAll('.mood-btn');
-            btns.forEach(b => b.classList.remove('selected'));
+            // ---- Placeholder interactions (feedback) ----
+            document.querySelectorAll('.btn-primary, .btn-outline').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    if (this.classList.contains('btn-primary') && !this.closest('.nav-tabs')) {
+                        // simple feedback
+                        const orig = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+                        this.disabled = true;
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-check-circle"></i> Selesai';
+                            setTimeout(() => {
+                                this.innerHTML = orig;
+                                this.disabled = false;
+                            }, 1000);
+                        }, 800);
+                    }
+                });
+            });
 
-            if (mood === 'Fine') {
-                btns[0].classList.add('selected');
-                currentSymptom = "No discomfort reported";
-            } else if (mood === 'Mild') {
-                btns[1].classList.add('selected');
-                currentSymptom = "Mild redness self-reported by patient today";
-            } else {
-                btns[2].classList.add('selected');
-                currentSymptom = "Moderate-to-high discomfort reported by patient";
-            }
-        }
+            // extra: "Terapkan Rekomendasi" feedback
+            document.querySelector('#pageDoctor .btn-primary')?.addEventListener('click', function(e) {
+                if (this.textContent.includes('Terapkan')) {
+                    e.preventDefault();
+                    const orig = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menerapkan...';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-check-circle"></i> Dosis diterapkan';
+                        setTimeout(() => {
+                            this.innerHTML = orig;
+                        }, 1200);
+                    }, 700);
+                }
+            });
 
-        function submitReport() {
-            document.getElementById('alert-text').innerText = currentSymptom;
-            alert("Laporan gejala berhasil dikirim ke dashboard Dokter!");
-        }
+        })();
     </script>
+
 </body>
 </html>
